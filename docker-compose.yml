@@ -1,0 +1,118 @@
+services:
+  cftlib-wa:
+    build: .
+    environment:
+      SPRING_LOGGING_LEVEL_ROOT: INFO
+      DB_HOST: host.docker.internal
+      S2S_SECRET_TASK_MONITOR: ${S2S_SECRET_TASK_MONITOR}
+      TASK_MONITOR_URL: http://host.docker.internal:9194
+      CASE_EVENT_HANDLER_SERVICE_URL: http://host.docker.internal:8088
+    ports:
+      - "9191:9191"
+
+  camunda:
+    image: hmctsprivate.azurecr.io/camunda/bpm:latest
+    environment:
+      CAMUNDA_DB_USER_NAME: postgres
+      CAMUNDA_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      CAMUNDA_DB_HOST: host.docker.internal
+      CAMUNDA_DB_PORT: 6432
+      S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+      S2S_SECRET_CAMUNDA_BPM: ${S2S_SECRET_CAMUNDA_BPM}
+      CLIENT_ID: ${CAMUNDA_CLIENT_ID}
+      CLIENT_SECRET: ${CAMUNDA_CLIENT_SECRET}
+      SPRING_FLYWAY_ENABLED: false
+      CAMUNDA_BPM_DATABASE_SCHEMA_UPDATE: true
+      SPRING_PROFILES_ACTIVE:
+      TASK_MANAGEMENT_API_URL: http://host.docker.internal:9193
+      LOGGING_LEVEL_ROOT: INFO
+      WA_AUTO_CONFIGURE_TASKS_ENABLED: false
+      CAMUNDA_API_AUTH_ENABLED: false
+    ports:
+      - "9090:8999"
+
+  wa-case-event-handler:
+    image: hmctspublic.azurecr.io/wa/case-event-handler:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: cftlib
+      SPRING_FLYWAY_ENABLED: false
+      AZURE_SERVICE_BUS_DLQ_FEATURE_TOGGLE: false
+      OPEN_ID_IDAM_URL: https://idam-web-public.aat.platform.hmcts.net
+      S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+      S2S_SECRET_CASE_EVENT_HANDLER: ${S2S_SECRET_CASE_EVENT_HANDLER}
+      IDAM_URL: https://idam-api.aat.platform.hmcts.net
+      WA_WORKFLOW_API_URL: http://host.docker.internal:9192
+      WA_TASK_MANAGEMENT_API_URL: http://host.docker.internal:9193
+      POSTGRES_HOST: host.docker.internal
+      POSTGRES_PORT: 6432
+      POSTGRES_NAME: datastore
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      WA_IDAM_CLIENT_SECRET: ${WA_IDAM_CLIENT_SECRET}
+      LAUNCH_DARKLY_SDK_KEY: ${WA_LAUNCH_DARKLY_SDK_KEY}
+      ROLE_ASSIGNMENT_URL: http://host.docker.internal:4096
+      CCD_URL: http://host.docker.internal:4452
+    ports:
+       - "8088:8088"
+
+  wa-workflow-api:
+    image: hmctspublic.azurecr.io/wa/workflow-api:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      CAMUNDA_URL: http://host.docker.internal:9090/engine-rest
+      WA_TASK_MANAGEMENT_API_URL: http://host.docker.internal:9193
+      POSTGRES_HOST: host.docker.internal
+      POSTGRES_PORT: 6432
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+      S2S_SECRET_WORKFLOW_API: ${S2S_SECRET_WORKFLOW_API}
+      LAUNCH_DARKLY_SDK_KEY: ${WA_LAUNCH_DARKLY_SDK_KEY}
+      SPRING_FLYWAY_SCHEMAS: wa_workflow_api
+    ports:
+      - "9192:8099"
+
+  wa-task-management-api:
+    image: hmctspublic.azurecr.io/wa/task-management-api:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      CCD_URL: http://host.docker.internal:4452
+      CAMUNDA_URL: http://host.docker.internal:9090/engine-rest
+      ROLE_ASSIGNMENT_URL: http://host.docker.internal:4096
+      S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+      OPEN_ID_IDAM_URL: https://idam-web-public.aat.platform.hmcts.net
+      S2S_SECRET_TASK_MANAGEMENT_API: ${S2S_SECRET_TASK_MANAGEMENT_API}
+      IDAM_URL: https://idam-api.aat.platform.hmcts.net
+      WA_SYSTEM_USERNAME: ${WA_SYSTEM_USERNAME}
+      WA_SYSTEM_PASSWORD: ${WA_SYSTEM_PASSWORD}
+      POSTGRES_HOST: host.docker.internal
+      POSTGRES_PORT: 6432
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REPLICATION_USERNAME: postgres
+      WA_IDAM_CLIENT_SECRET: ${WA_IDAM_CLIENT_SECRET}
+      LAUNCH_DARKLY_SDK_KEY: ${WA_LAUNCH_DARKLY_SDK_KEY}
+      MANDATORY_TASK_FIELD_CHECK_ENABLED: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: cft_task_db
+      SPRING_FLYWAY_DEFAULT_SCHEMA: cft_task_db
+      SPRING_FLYWAY_SCHEMAS: cft_task_db
+    ports:
+      - "9193:8087"
+
+  wa-task-monitor:
+    image: hmctspublic.azurecr.io/wa/task-monitor:latest
+    environment:
+      OPEN_ID_IDAM_URL: https://idam-web-public.aat.platform.hmcts.net
+      WA_IDAM_CLIENT_SECRET: ${WA_IDAM_CLIENT_SECRET}
+      CAMUNDA_URL: http://host.docker.internal:9090/engine-rest
+      WA_TASK_MANAGEMENT_API_URL: http://host.docker.internal:9193
+      CASE_EVENT_HANDLER_SERVICE_URL: http://host.docker.internal:8088
+      CCD_SEARCH_URL: http://host.docker.internal:4452
+      CCD_URL: http://host.docker.internal:4452
+      S2S_URL: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+      S2S_SECRET_TASK_MONITOR: ${S2S_SECRET_TASK_MONITOR}
+      ROLE_ASSIGNMENT_URL: http://host.docker.internal:4096
+      WA_SYSTEM_USERNAME: ${WA_SYSTEM_USERNAME}
+      WA_SYSTEM_PASSWORD: ${WA_SYSTEM_PASSWORD}
+      IDAM_URL: https://idam-api.aat.platform.hmcts.net
+    ports:
+      - "9194:8077"

@@ -1,0 +1,39 @@
+server:
+    port: 9191
+
+spring:
+  application:
+    name: cftlib-wa
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:6432/datastore
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+idam:
+  s2s-auth:
+    url: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+    microservice: wa_task_monitor
+    totp_secret: ${S2S_SECRET_TASK_MONITOR:AAAAAAAAAAAAAAAA}
+
+message-queue-candidate-task:
+    interval: ${MESSAGE_QUEUE_CANDIDATE_TASK_INTERVAL:5000}
+
+task-monitor:
+  url: ${TASK_MONITOR_URL:http://localhost:9194}
+  initiation-task:
+    interval: ${TASK_MONITOR_INITIATION_TASK_INTERVAL:5000}
+  reconfiguration-task:
+    interval: ${TASK_MONITOR_RECONFIGURATION_TASK_INTERVAL:60000}
+  termination-task:
+    interval: ${TASK_MONITOR_TERMINATION_TASK_INTERVAL:60000}
+
+wa-case-event-handler:
+  url: ${CASE_EVENT_HANDLER_SERVICE_URL:http://localhost:8088}
+  find-problem-messages-task:
+    interval: ${CASE_EVENT_HANDLER_FIND_PROBLEM_MESSAGES_TASK_INTERVAL:60000}
