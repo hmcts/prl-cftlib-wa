@@ -1,8 +1,5 @@
-# Work Allocation integration with cftlib
-The aim of this project is to demonstrate how work allocation can be integrated with cftlib.
-
-## Rationale
-Because developing in the preview environment is :poop:.
+# PRL: Work Allocation integration with cftlib
+This project adds work allocation to the PRL cftlib local development environment.
 
 ## Approach
 - The main obstacle with integrating work allocation is the dependency on Azure Service Bus.
