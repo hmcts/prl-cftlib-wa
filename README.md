@@ -1,5 +1,5 @@
 # PRL: Work Allocation integration with cftlib
-This project adds work allocation to the PRL cftlib local development environment.
+This project adds Work Allocation to the PRL cftlib local development environment.
 
 ## Approach
 - The main obstacle with integrating work allocation is the dependency on Azure Service Bus.
