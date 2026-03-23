@@ -32,7 +32,7 @@ services:
       - "9090:8999"
 
   wa-case-event-handler:
-    image: hmctspublic.azurecr.io/wa/case-event-handler:latest
+    image: hmctsprod.azurecr.io/wa/case-event-handler:latest
     environment:
       SPRING_PROFILES_ACTIVE: cftlib
       SPRING_FLYWAY_ENABLED: false
@@ -56,7 +56,7 @@ services:
        - "8088:8088"
 
   wa-workflow-api:
-    image: hmctspublic.azurecr.io/wa/workflow-api:latest
+    image: hmctsprod.azurecr.io/wa/workflow-api:latest
     environment:
       SPRING_PROFILES_ACTIVE: local
       CAMUNDA_URL: http://host.docker.internal:9090/engine-rest
@@ -72,7 +72,7 @@ services:
       - "9192:8099"
 
   wa-task-management-api:
-    image: hmctspublic.azurecr.io/wa/task-management-api:latest
+    image: hmctsprod.azurecr.io/wa/task-management-api:latest
     environment:
       SPRING_PROFILES_ACTIVE: local
       CCD_URL: http://host.docker.internal:4452
@@ -99,7 +99,7 @@ services:
       - "9193:8087"
 
   wa-task-monitor:
-    image: hmctspublic.azurecr.io/wa/task-monitor:latest
+    image: hmctsprod.azurecr.io/wa/task-monitor:latest
     environment:
       OPEN_ID_IDAM_URL: https://idam-web-public.aat.platform.hmcts.net
       WA_IDAM_CLIENT_SECRET: ${WA_IDAM_CLIENT_SECRET}
