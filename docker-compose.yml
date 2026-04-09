@@ -11,7 +11,7 @@ services:
       - "9191:9191"
 
   camunda:
-    image: hmctsprivate.azurecr.io/camunda/bpm:latest
+    image: hmctsprod.azurecr.io/camunda/bpm:latest
     environment:
       CAMUNDA_DB_USER_NAME: postgres
       CAMUNDA_DB_PASSWORD: ${POSTGRES_PASSWORD}
